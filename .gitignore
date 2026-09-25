@@ -1,0 +1,101 @@
+# LibreOffice Rust Spellchecker
+
+This repository is a prototype of a LibreOffice spellchecker and grammar corrector implemented in Rust, exposed through a bridge layer compatible with LibreOffice scripts and external libraries.
+
+The project is designed to be a starting point for a native-style extension where:
+
+- Rust handles the dictionary, spell checking, and grammar heuristics
+- a small bridge exposes the functionality to LibreOffice
+- the extension package defines the UNO/LibreOffice entry point
+
+## Project structure
+
+```text
+.
+├── Cargo.toml
+├── README.md
+├── .gitignore
+├── data/
+│   └── english.dict
+├── src/
+│   ├── dictionary.rs
+│   ├── grammar.rs
+│   ├── lib.rs
+│   └── spellcheck.rs
+├── python/
+│   └── uno_bridge.py
+├── extension/
+│   ├── Addons.xcu
+│   ├── description.xml
+│   └── package/
+│       └── README.txt
+└── scripts/
+    └── build.sh
+```
+
+## Build
+
+```bash
+cargo build --release
+```
+
+This generates a shared library in `target/release`:
+
+```bash
+ls target/release/liblo_rust_spellcheck.*
+```
+
+## Load the library from Python
+
+```bash
+python3 python/uno_bridge.py
+```
+
+The bridge script tries to load the Rust library and exposes functions such as:
+
+- `check_word(word)`
+- `suggest(word, limit=5)`
+- `correct_text(text)`
+
+## LibreOffice integration
+
+This repo provides a minimal extension skeleton for LibreOffice. You can adapt the bridge script to run from a LibreOffice Python macro or UNO bootstrap mechanism.
+
+### Notes
+
+- LibreOffice does not natively run Rust directly as a plugin the same way Java or Python do.
+- The practical architecture is usually:
+  - Rust engine for spell and grammar logic
+  - Python or C++ shim for UNO access
+  - extension package for deployment
+
+## Grammar corrector
+
+The grammar layer currently includes simple heuristics such as:
+
+- repeated-word detection
+- common typo replacements (`teh` → `the`, `adn` → `and`)
+- spacing normalization
+- sentence capitalization
+- final punctuation cleanup
+
+This is intentionally a prototype and should be extended with a richer dictionary or language model for production use.
+
+## Future improvements
+
+- proper integration with UNO spell-check interfaces
+- dictionary with affix rules
+- multilingual support
+- suggestion ranking using edit distance and frequency
+- full LO package generation with `unopkg`
+
+## Example
+
+```python
+from python.uno_bridge import SpellCheckerBridge
+
+checker = SpellCheckerBridge()
+print(checker.check_word("hello"))
+print(checker.suggest("hallo"))
+print(checker.correct_text("teh hello hello world"))
+```

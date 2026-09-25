@@ -1,0 +1,11 @@
+[package]
+name = "lo_rust_spellcheck"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "lo_rust_spellcheck"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+once_cell = "1.19"

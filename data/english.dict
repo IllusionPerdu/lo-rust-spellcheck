@@ -1,0 +1,11 @@
+# Rust
+/target/
+Cargo.lock
+
+# Python
+__pycache__/
+*.pyc
+
+# LibreOffice / packaging
+*.oxt
+*.zip
